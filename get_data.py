@@ -8,11 +8,11 @@ def get_data():
 
     base_url = 'http://export.arxiv.org/api/query?'
 
-    search_query = 'cat:hep-ex+AND+submittedDate:[201001010000+TO+201501010000]'
+    search_query = 'cat:hep-th+AND+submittedDate:[201001010000+TO+201501010000]'
     start = 0
-    results_per_iteration = 5
+    results_per_iteration = 1000
     wait_time = 5                 
-    max_results = 10
+    max_results = 10000
 
     feedparser._FeedParserMixin.namespaces['http://a9.com/-/spec/opensearch/1.1/'] = 'opensearch'
     feedparser._FeedParserMixin.namespaces['http://arxiv.org/schemas/atom'] = 'arxiv'
@@ -50,6 +50,6 @@ def get_data():
     return df
 
 df = get_data()
-print(df.tail())
+print(df)
 
-df.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/my_data.pkl")
+df.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/full_data_th_2010_2015_10k.pkl")
