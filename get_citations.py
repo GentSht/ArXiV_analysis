@@ -4,6 +4,7 @@ import time
 import pandas as pd
 import requests
 from collections import defaultdict
+import sys
 
 
 ihep_search_arxiv = "https://inspirehep.net/api/arxiv/"
@@ -11,14 +12,30 @@ ihep_search_article = "https://inspirehep.net/api/literature?sort=mostcited&size
 
 year = [str(x+1) for x in range(2009,2022)]
 
-
+#full_data_th_2010_2015_10k
 
 def recollect_data():
 
     df = pd.read_pickle(r"d:/genti/Desktop/datasets/arxiv dataset/full_data_th_2010_2015_10k.pkl")
 
-    arxiv_id = df["id"].map(lambda x: str(x)[:-2]).to_list()
-    
+    arxiv_id = df["id"].map(lambda x: x.partition("v")[0]).to_list()
+
+    print('There are initially %i arXiV articles' % len(arxiv_id))
+
+    for i,id in enumerate(arxiv_id):
+        inspirehep_url_arxiv = f"{ihep_search_arxiv}{id}"
+        try:
+            data_arxiv = requests.get(inspirehep_url_arxiv).json()['metadata']
+        except KeyError:
+            arxiv_id.pop(i)
+            print("The arXiV id %s with index %i gives an error. It has been removed." % (id,i))
+
+        progress_bar(i,len(arxiv_id),'fetching arxiv ids')
+
+
+    print("There are finally %i valid arXiV articles" % len(arxiv_id))
+
+
     return arxiv_id
 
 
@@ -34,85 +51,74 @@ def count_year(year, input_list):
     return year_count
 
 
-    
-
 def get_number_cite():
 
+    citation_count = pd.DataFrame(columns=['ArXiV ID','Number of total citations'])
 
-    citation_count = []
-
-    for id in arxiv_id:
+    for i, id in enumerate(arxiv_id):
 
         inspirehep_url_arxiv = f"{ihep_search_arxiv}{id}"
-
-        citation_count.append(requests.get(inspirehep_url_arxiv).json()["metadata"]["citation_count"])
+        cc = {'ArXiV ID':id,'Number of total citations': requests.get(inspirehep_url_arxiv).json()["metadata"]["citation_count"]}
+        citation_count = citation_count.append(cc,True)
+        progress_bar(i,len(arxiv_id),'fetching total citations')
 
     return citation_count
 
 
 def get_cnumber():
 
-
     citation_url = []
 
-    for id in arxiv_id:
+    for id, article_id in enumerate(arxiv_id):
 
-        try:
-            inspirehep_url_arxiv = f"{ihep_search_arxiv}{id}"
-
-            control_number = requests.get(inspirehep_url_arxiv).json()["metadata"]["control_number"]
-            
-            citation_url.append(f"{ihep_search_article}{control_number}")
-
-
-        except KeyError:
-            print("The arXiV id %s gives an error" % id)
-
-
+        inspirehep_url_arxiv = f"{ihep_search_arxiv}{article_id}"
+        control_number = requests.get(inspirehep_url_arxiv).json()["metadata"]["control_number"]
+        citation_url.append(f"{ihep_search_article}{control_number}")
+        progress_bar(id,len(arxiv_id),'fetching urls')
+    
     return citation_url
+
+
+def progress_bar(count, total, status=''):
+    bar_len = 60
+    filled_len = int(round(bar_len * count / float(total)))
+
+    percents = round(100.0 * count / float(total), 1)
+    bar = '=' * filled_len + '-' * (bar_len - filled_len)
+
+    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
+    sys.stdout.flush()
 
 
 def get_citations():
 
     citation_url = get_cnumber()
-
     max_results = len(citation_url)
-    num_requests = 15
-    sleeping_time = 5
-
     citation_per_year = pd.DataFrame(columns=year)
-
     citation_date = defaultdict(list)
 
     for i, url in enumerate(citation_url):
 
         data_article = requests.get(url).json()
-
         if len(data_article["hits"]["hits"]) == 0:
-
             citation_date[i].append('NaN')
-
         else : 
-
             for j, _ in enumerate(data_article["hits"]["hits"]):
-
                 citation_date[i].append(data_article["hits"]["hits"][j]["created"][:4])
 
-        print("url %i is done " % i)
+        progress_bar(i,max_results,'fetching citations')
 
     for p, _ in enumerate(citation_date):
         citation_per_year = citation_per_year.append(count_year(year,citation_date[p]), True)
 
-
     citation_per_year.insert(0,"arxiv_id",arxiv_id,True)
     
-
     return citation_per_year
 
 
 arxiv_id = recollect_data()
 
-cit_url = get_cnumber()
+df = get_citations()
 
-#print(get_citations())
+df.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/arxiv_id_citation_year_th.pkl")
 
