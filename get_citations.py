@@ -8,7 +8,7 @@ import sys
 
 
 ihep_search_arxiv = "https://inspirehep.net/api/arxiv/"
-ihep_search_article = "https://inspirehep.net/api/literature?sort=mostcited&size=150&page=1&q=refersto%3Arecid%3A"
+ihep_search_article = "https://inspirehep.net/api/literature?sort=mostcited&size=500&page=1&q=refersto%3Arecid%3A"
 
 year = [str(x+1) for x in range(2009,2022)]
 
@@ -53,14 +53,16 @@ def count_year(year, input_list):
 
 def get_number_cite():
 
-    citation_count = pd.DataFrame(columns=['ArXiV ID','Number of total citations'])
+    citation_count = pd.DataFrame(columns=['arxiv_id','Number of total citations'])
 
     for i, id in enumerate(arxiv_id):
 
         inspirehep_url_arxiv = f"{ihep_search_arxiv}{id}"
-        cc = {'ArXiV ID':id,'Number of total citations': requests.get(inspirehep_url_arxiv).json()["metadata"]["citation_count"]}
+        cc = {'arxiv_id':id,'Number of total citations': requests.get(inspirehep_url_arxiv).json()["metadata"]["citation_count"]}
         citation_count = citation_count.append(cc,True)
         progress_bar(i,len(arxiv_id),'fetching total citations')
+
+    citation_count.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/arxiv_id_total_citation_th.pkl")
 
     return citation_count
 
