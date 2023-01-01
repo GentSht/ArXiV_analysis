@@ -11,9 +11,9 @@ from sklearn import metrics
 
 def get_dataset():
 
-    df_citation = pd.read_pickle("d:/genti/Desktop/datasets/arxiv dataset/final_hep_th.pkl")
+    df_citation = pd.read_pickle("data/final_hep_th.pkl")
 
-    df_full = pd.read_pickle("d:/genti/Desktop/datasets/arxiv dataset/full_data_th_2010_2015_10k.pkl")
+    df_full = pd.read_pickle("data/full_data_th_2010_2015_10k.pkl")
 
     df_full["id"] = df_full["id"].map(lambda x: x.partition("v")[0])
     df_full["created"] = df_full["created"].map(lambda x: x[:4])

@@ -4,9 +4,9 @@ import numpy as np
 
 year = [str(x+1) for x in range(2009,2022)]
 
-df = pd.read_pickle("d:/genti/Desktop/datasets/arxiv dataset/arxiv_id_total_citation_th.pkl")
+df = pd.read_pickle("data/arxiv_id_total_citation_th.pkl")
 
-df_year = pd.read_pickle('d:/genti/Desktop/datasets/arxiv dataset/arxiv_id_citation_year_th.pkl')
+df_year = pd.read_pickle('data/arxiv_id_citation_year_th.pkl')
 
 df.columns = ['arxiv_id' if x=='ArXiV ID' else x for x in df.columns]
 
@@ -24,7 +24,7 @@ df_test.columns = ['Total' if x == 'Number of total citations' else x for x in d
 
 print(df_test.head())
 
-df_test.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/final_hep_th.pkl")
+df_test.to_pickle("data/final_hep_th.pkl")
 
 cit_11_13 = df_year[['2011','2012','2013']].sum(axis=1).to_list()
 print('Percentage of articles (2011-13) with number of citations bigger than average : ', 100*sum(i>mean_citation_tot for i in cit_11_13)/len(df_year))
@@ -46,23 +46,6 @@ print("Between 32 and 100 citations : ", count_supmean_inf100)
 print("Greater than 100 citations : ", count_sup100)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ''' mean_per_year = [(y,df_year[y].mean()) for y in year]
 print(mean_per_year)
 
@@ -73,7 +56,7 @@ plt.yscale("log")
 plt.xlim(left=0)
 plt.title("Distribution of the number of citations for hep-th articles in 2010")
 #plt.show()
-plt.savefig("d:/genti/Desktop/datasets/arxiv dataset/hep_th_distribution_citation_2010.png") '''
+plt.savefig("data/hep_th_distribution_citation_2010.png") '''
 
 ''' df_sorted = df.sort_values(by=['Number of total citations'], ascending=False)
 df_ysort = df_year.sort_values(by=['2010','2011','2012','2013'], ascending=False)
@@ -86,7 +69,7 @@ plt.yscale("log")
 plt.xlim(left=0)
 plt.title("Distribution of the number of citations for hep-th articles (2010-15)")
 
-plt.savefig("d:/genti/Desktop/datasets/arxiv dataset/hep_th_distribution_citation.png") ''' 
+plt.savefig("data/hep_th_distribution_citation.png") ''' 
 
 
 

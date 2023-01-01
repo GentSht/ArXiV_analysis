@@ -16,7 +16,7 @@ year = [str(x+1) for x in range(2009,2022)]
 
 def recollect_data():
 
-    df = pd.read_pickle(r"d:/genti/Desktop/datasets/arxiv dataset/full_data_th_2010_2015_10k.pkl")
+    df = pd.read_pickle(r"data/full_data_th_2010_2015_10k.pkl")
 
     arxiv_id = df["id"].map(lambda x: x.partition("v")[0]).to_list()
 
@@ -62,7 +62,7 @@ def get_number_cite():
         citation_count = citation_count.append(cc,True)
         progress_bar(i,len(arxiv_id),'fetching total citations')
 
-    citation_count.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/arxiv_id_total_citation_th.pkl")
+    citation_count.to_pickle("data/arxiv_id_total_citation_th.pkl")
 
     return citation_count
 
@@ -122,5 +122,5 @@ arxiv_id = recollect_data()
 
 df = get_citations()
 
-df.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/arxiv_id_citation_year_th.pkl")
+df.to_pickle("data/arxiv_id_citation_year_th.pkl")
 

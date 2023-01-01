@@ -52,4 +52,4 @@ def get_data():
 df = get_data()
 print(df)
 
-df.to_pickle("d:/genti/Desktop/datasets/arxiv dataset/full_data_th_2010_2015_10k.pkl")
+df.to_pickle("data/full_data_th_2010_2015_10k.pkl")
