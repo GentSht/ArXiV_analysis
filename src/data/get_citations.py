@@ -7,18 +7,25 @@ from collections import defaultdict
 import sys
 
 
-ihep_search_arxiv = "https://inspirehep.net/api/arxiv/"
-ihep_search_article = "https://inspirehep.net/api/literature?sort=mostcited&size=500&page=1&q=refersto%3Arecid%3A"
+ihep_search_arxiv = "https://inspirehep.net/api/arxiv/" #link to get the metadata for an arxiv id
+ihep_search_article = "https://inspirehep.net/api/literature?sort=mostcited&size=500&page=1&q=refersto%3Arecid%3A" #link to get the citing papers and their metadata
 
 year = [str(x+1) for x in range(2009,2022)]
 
-#full_data_th_2010_2015_10k
+def progress_bar(count, total, status=''):
+    bar_len = 60
+    filled_len = int(round(bar_len * count / float(total)))
 
-def recollect_data():
+    percents = round(100.0 * count / float(total), 1)
+    bar = '=' * filled_len + '-' * (bar_len - filled_len)
 
-    df = pd.read_pickle(r"data/full_data_th_2010_2015_10k.pkl")
+    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
+    sys.stdout.flush()
 
-    arxiv_id = df["id"].map(lambda x: x.partition("v")[0]).to_list()
+
+def recollect_data(df):
+    #collecting the arxiv ids that were harvested with get_data.py
+    arxiv_id = df["id"].map(lambda x: x.partition("v")[0]).to_list()#for instance 1001.0034v22 becomes 1001.0034
 
     print('There are initially %i arXiV articles' % len(arxiv_id))
 
@@ -40,7 +47,7 @@ def recollect_data():
 
 
 def count_year(year, input_list):
-    
+    #Count the occurrences of each year in the citing articles.
     year_count = {}
     for y in year:
         if input_list[0] == 'NaN':
@@ -52,7 +59,7 @@ def count_year(year, input_list):
 
 
 def get_number_cite():
-
+    #get the total number citations for each arxiv id. Can be modified to look for only single count citations.
     citation_count = pd.DataFrame(columns=['arxiv_id','Number of total citations'])
 
     for i, id in enumerate(arxiv_id):
@@ -68,7 +75,7 @@ def get_number_cite():
 
 
 def get_cnumber():
-
+    #get the control number in order to search the article metadata from each arxiv id
     citation_url = []
 
     for id, article_id in enumerate(arxiv_id):
@@ -79,17 +86,6 @@ def get_cnumber():
         progress_bar(id,len(arxiv_id),'fetching urls')
     
     return citation_url
-
-
-def progress_bar(count, total, status=''):
-    bar_len = 60
-    filled_len = int(round(bar_len * count / float(total)))
-
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
 
 
 def get_citations():
@@ -106,7 +102,7 @@ def get_citations():
             citation_date[i].append('NaN')
         else : 
             for j, _ in enumerate(data_article["hits"]["hits"]):
-                citation_date[i].append(data_article["hits"]["hits"][j]["created"][:4])
+                citation_date[i].append(data_article["hits"]["hits"][j]["created"][:4]) #getting the year of publication of a citing article
 
         progress_bar(i,max_results,'fetching citations')
 
@@ -118,9 +114,14 @@ def get_citations():
     return citation_per_year
 
 
-arxiv_id = recollect_data()
 
-df = get_citations()
+if __name__ == "__main__":
 
-df.to_pickle("data/arxiv_id_citation_year_th.pkl")
+    df = pd.read_pickle(r"data/full_data_th_2010_2015_10k.pkl")
+
+    arxiv_id = recollect_data(df)
+
+    df_citations = get_citations()
+
+    df_citations.to_pickle("data/arxiv_id_citation_year_th.pkl")
 
