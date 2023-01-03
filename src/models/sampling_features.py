@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -57,6 +58,12 @@ def get_feature_label(data):
     
     return features, labels
 
+def scaling(t):
+
+    scaler = StandardScaler()
+    t = scaler.fit_transform(t)
+
+    return t
 
 if __name__ == "__main__":
 
