@@ -58,12 +58,14 @@ def get_feature_label(data):
     
     return features, labels
 
-def scaling(t):
-
+def scaling(train,train_test):
+    #maybe not necessary to scale data in our case
     scaler = StandardScaler()
-    t = scaler.fit_transform(t)
+    scaler.fit(train)
+    train_test = scaler.transform(train_test)
 
-    return t
+    return train_test
+    
 
 if __name__ == "__main__":
 
