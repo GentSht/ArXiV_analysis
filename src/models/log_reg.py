@@ -7,42 +7,47 @@ from sampling_features import *
 
 
 
-def log_class():
+def log_class(parameter):
     
-    LM_model = LogisticRegression(penalty = 'l2', multi_class='auto', solver='sag',max_iter=100)
-    LM_model.fit(train_feature,train_label)
+    lm_model = LogisticRegression(multi_class='auto',max_iter=parameter['max_iter'],solver=parameter['solver'])
+    lm_model.fit(train_feature,train_label)
 
-    LM_pred_prob = pd.DataFrame(LM_model.predict_proba(test_feature))
-    LM_pred = pd.DataFrame(LM_model.predict(test_feature))
+    lm_pred_prob = pd.DataFrame(lm_model.predict_proba(test_feature))
+    lm_pred = pd.DataFrame(lm_model.predict(test_feature))
 
-    LM_final = pd.concat([test_label.reset_index()['strat_category'],LM_pred_prob,LM_pred],axis=1, ignore_index=True)
-    LM_final.columns = ['Actual','A','B','C','Predicted']
+    lm_final = pd.concat([test_label.reset_index()['strat_category'],lm_pred_prob,lm_pred],axis=1, ignore_index=True)
+    lm_final.columns = ['Actual','A','B','C','Predicted']
 
-    print(LM_final.head())
-    print(LM_final.tail())
+    print(lm_final.head())
+    print(lm_final.tail())
 
-    a = f1_score(LM_final['Actual'],LM_final['Predicted'],average='micro')
+    a = f1_score(lm_final['Actual'],lm_final['Predicted'],average='micro')
     print(a*100)
+
+    print(metrics.classification_report(lm_final['Actual'],lm_final['Predicted']))
 
 
 def param_tuning():
     #iter:100,solver:sag
     iter = list(np.linspace(100,10000,20))
 
-    LM_model = LogisticRegression(multi_class='auto')
+    lm_model = LogisticRegression(multi_class='auto')
     parameters = {'solver':['sag','saga','lbfgs','newton-cg'], 'max_iter':iter}
 
-    
-    grid_search = GridSearchCV(LM_model,parameters, cv=5,scoring='f1_micro')
+    grid_search = GridSearchCV(lm_model,parameters, cv=5,scoring='f1_micro')
     grid_search.fit(train_feature,train_label)
 
-    print(grid_search.best_params_)
+    return grid_search.best_params_
 
 
 df_final = get_dataset()
 train_set, test_set = sampling(df_final)
+
 train_feature, train_label = get_feature_label(train_set.copy())
 test_feature, test_label = get_feature_label(test_set.copy())
+
 train_feature = scaling(train_feature)
 test_feature = scaling(test_feature)
-log_class()
+
+parameter = param_tuning()
+log_class(parameter)

@@ -7,7 +7,7 @@ from sklearn import metrics
 from sampling_features import *
 
 
-def log_class():
+''' def log_class():
     
     LM_model = LogisticRegression(penalty='l1', max_iter=5000, multi_class='ovr', solver='saga')
     LM_model.fit(train_feature,train_label)
@@ -25,7 +25,7 @@ def log_class():
     print(a*100)
 
 
-''' def decision_tree():
+def decision_tree():
 
     dt_model = DecisionTreeClassifier(random_state=0).fit(train_feature,train_label)
 
@@ -58,10 +58,9 @@ def random_forest():
     print(a*100)
 
     print(metrics.classification_report(rf_final['Actual'],rf_final['Predicted']))
- '''
-
+ 
 
 df_final = get_dataset()
 train_set, test_set = sampling(df_final)
 train_feature, train_label = get_feature_label(train_set.copy())
-test_feature, test_label = get_feature_label(test_set.copy())
+test_feature, test_label = get_feature_label(test_set.copy())  '''
