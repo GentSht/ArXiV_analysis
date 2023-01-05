@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import f1_score
@@ -17,13 +18,9 @@ def random_forest(parameter):
     rf_final = pd.concat([test_label.reset_index()['strat_category'],pred_prob,pred],axis=1,ignore_index=True)
     rf_final.columns = ['Actual','A','B','C','Predicted']
 
-    print(rf_final.head())
-    print(rf_final.tail())
-
-    a = f1_score(rf_final['Actual'],rf_final['Predicted'],average='macro')
-    print(a*100)
-
     print(metrics.classification_report(rf_final['Actual'],rf_final['Predicted']))
+
+    return rf_model.__class__.__name__, rf_final
 
 
 def param_tuning(score):
@@ -42,13 +39,26 @@ def param_tuning(score):
     print('Best parameters for a random forest : ', grid_search.best_params_)
 
     return grid_search.best_params_
+
+def class_report(estimator,df,parameter):
     
+    class_dict = {**{'Estimator':estimator,'f1_micro':metrics.f1_score(df['Actual'],df['Predicted'],average='micro')},**parameter}
+    report_metric = metrics.classification_report(df['Actual'],df['Predicted'],output_dict=True)
+    
+    j_dict = {**class_dict,**report_metric}
 
-df_final = get_dataset()
-train_set, test_set = sampling(df_final)
+    with open(f'reports/{estimator}_report.json','w') as jfile:
+        json.dump(j_dict,jfile,indent=4)
+        print(f'{jfile} has been created')    
 
-train_feature, train_label = get_feature_label(train_set.copy())
-test_feature, test_label = get_feature_label(test_set.copy())
+if __name__ == '__main__':
+    df_final = get_dataset()
+    train_set, test_set = sampling(df_final)
 
-parameter = param_tuning('f1_weighted')
-random_forest(parameter)
+    train_feature, train_label = get_feature_label(train_set.copy())
+    test_feature, test_label = get_feature_label(test_set.copy())
+
+    print('Evaluating the random forest...')
+    parameter = param_tuning('f1_micro')
+    estimator,df = random_forest(parameter)
+    class_report(estimator,df,parameter)

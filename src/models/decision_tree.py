@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import f1_score
@@ -16,16 +17,11 @@ def decision_tree(parameter):
     pred = pd.DataFrame(dt_model.predict(test_feature))
 
     dt_final = pd.concat([test_label.reset_index()['strat_category'],pred_prob,pred],axis=1,ignore_index=True)
-
     dt_final.columns = ['Actual','A','B','C','Predicted']
 
-    print(dt_final.head())
-    print(dt_final.tail())
-
-    a = f1_score(dt_final['Actual'],dt_final['Predicted'],average='micro')
-    print(a*100)
-
     print(metrics.classification_report(dt_final['Actual'],dt_final['Predicted']))
+
+    return dt_model.__class__.__name__, dt_final
 
 def param_tuning(score):
 
@@ -43,12 +39,26 @@ def param_tuning(score):
 
     return grid_search.best_params_
 
+def class_report(estimator,df,parameter):
 
-df_final = get_dataset()
-train_set, test_set = sampling(df_final)
+    class_dict = {**{'Estimator':estimator,'f1_micro':metrics.f1_score(df['Actual'],df['Predicted'],average='micro')},**parameter}
+    report_metric = metrics.classification_report(df['Actual'],df['Predicted'],output_dict=True)
+    
+    j_dict = {**class_dict,**report_metric}
 
-train_feature, train_label = get_feature_label(train_set.copy())
-test_feature, test_label = get_feature_label(test_set.copy())
+    with open(f'reports/{estimator}_report.json','w') as jfile:
+        json.dump(j_dict,jfile,indent=4)
+        print(f'{jfile} has been created')
+    
 
-parameter = param_tuning('f1_weighted')
-decision_tree(parameter)
+if __name__ == '__main__':
+    df_final = get_dataset()
+    train_set, test_set = sampling(df_final)
+
+    train_feature, train_label = get_feature_label(train_set.copy())
+    test_feature, test_label = get_feature_label(test_set.copy())
+
+    print('Evaluating the decision tree...')
+    parameter = param_tuning('f1_micro')
+    estimator,df = decision_tree(parameter)
+    class_report(estimator,df,parameter)

@@ -1,10 +1,10 @@
 import pandas as pd
+import json
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import f1_score
 from sklearn import metrics
 from sampling_features import *
-
 
 
 def log_class(parameter):
@@ -18,14 +18,9 @@ def log_class(parameter):
     lm_final = pd.concat([test_label.reset_index()['strat_category'],lm_pred_prob,lm_pred],axis=1, ignore_index=True)
     lm_final.columns = ['Actual','A','B','C','Predicted']
 
-    print(lm_final.head())
-    print(lm_final.tail())
-
-    a = f1_score(lm_final['Actual'],lm_final['Predicted'],average='weighted')
-    print(a*100)
-
     print(metrics.classification_report(lm_final['Actual'],lm_final['Predicted']))
 
+    return lm_model.__class__.__name__, lm_final
 
 def param_tuning(score):
   
@@ -40,12 +35,25 @@ def param_tuning(score):
     print('Best parameters for a logistic classification : ', grid_search.best_params_)
     return grid_search.best_params_
 
+def class_report(estimator,df,parameter):
+    
+    class_dict = {**{'Estimator':estimator,'f1_micro':metrics.f1_score(df['Actual'],df['Predicted'],average='micro')},**parameter}
+    report_metric = metrics.classification_report(df['Actual'],df['Predicted'],output_dict=True)
+    
+    j_dict = {**class_dict,**report_metric}
 
-df_final = get_dataset()
-train_set, test_set = sampling(df_final)
+    with open(f'reports/{estimator}_report.json','w') as jfile:
+        json.dump(j_dict,jfile,indent=4)
+        print(f'{jfile} has been created')
 
-train_feature, train_label = get_feature_label(train_set.copy())
-test_feature, test_label = get_feature_label(test_set.copy())
+if __name__ == '__main__':
+    df_final = get_dataset()
+    train_set, test_set = sampling(df_final)
 
-parameter = param_tuning('f1_weighted')
-log_class(parameter)
+    train_feature, train_label = get_feature_label(train_set.copy())
+    test_feature, test_label = get_feature_label(test_set.copy())
+
+    print('Evaluating the logistic regression...')
+    parameter = param_tuning('f1_micro')
+    estimator, df = log_class(parameter)
+    class_report(estimator,df,parameter)
