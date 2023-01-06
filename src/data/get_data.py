@@ -20,7 +20,7 @@ def get_data():
     start = 0
     results_per_iteration = 1000
     wait_time = 5                 
-    max_results = 10000
+    max_results = 20000
     total_steps = max_results/results_per_iteration
 
     feedparser._FeedParserMixin.namespaces['http://a9.com/-/spec/opensearch/1.1/'] = 'opensearch'
@@ -30,7 +30,7 @@ def get_data():
 
     for i in range(start,max_results,results_per_iteration):
 
-        step = i/results_per_iteration
+        step = (i/results_per_iteration)+1
         query = 'search_query=%s&start=%i&max_results=%i' % (search_query,i,results_per_iteration)
         response = urllib.request.urlopen(base_url+query).read()
         feed = feedparser.parse(response)
@@ -58,7 +58,8 @@ def get_data():
 if __name__ == "__main__":
     df = get_data()
     print(df.head())
+    print("Size of the dataframe : ", df.shape)
     file_path = f"data/full_data_th_{start_year}_{end_year}.pkl"
     df.to_pickle(file_path)
-    print("File {file_path} has been created")
+    print(f"File {file_path} has been created")
         
