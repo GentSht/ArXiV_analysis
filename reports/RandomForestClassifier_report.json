@@ -1,0 +1,39 @@
+{
+    "Estimator": "RandomForestClassifier",
+    "f1_micro": 0.9006756756756756,
+    "criterion": "entropy",
+    "max_depth": 5,
+    "max_features": "log2",
+    "n_estimators": 150,
+    "A": {
+        "precision": 0.9375,
+        "recall": 0.9672897196261683,
+        "f1-score": 0.9521619135234591,
+        "support": 1070
+    },
+    "B": {
+        "precision": 0.7766323024054983,
+        "recall": 0.7337662337662337,
+        "f1-score": 0.7545909849749582,
+        "support": 308
+    },
+    "C": {
+        "precision": 0.8470588235294118,
+        "recall": 0.7058823529411765,
+        "f1-score": 0.770053475935829,
+        "support": 102
+    },
+    "accuracy": 0.9006756756756756,
+    "macro avg": {
+        "precision": 0.8537303753116366,
+        "recall": 0.8023127687778596,
+        "f1-score": 0.8256021248114154,
+        "support": 1480
+    },
+    "weighted avg": {
+        "precision": 0.897789019689793,
+        "recall": 0.9006756756756756,
+        "f1-score": 0.8984950847215155,
+        "support": 1480
+    }
+}
