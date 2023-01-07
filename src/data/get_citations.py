@@ -90,13 +90,56 @@ def get_citations(arxiv_id, citation_url):
     
     return citation_per_year
 
-if __name__ == "__main__":
-    df = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
-    arxiv_id, citation_url = recollect_data(df)
-    df_citations = get_citations(arxiv_id, citation_url)
+def partition(arxiv_id, citation_url):
+
+    rd = (round(len(arxiv_id)/10**3))*10**3
+    rest = len(arxiv_id)
+
+    for i in range(0,rd,1000):
+        a = i
+        b = i+10**3
+        df_citations = get_citations(arxiv_id[a:b], citation_url[a:b])
+        print(df_citations.head())
+        print("The size of the dataframe is : ", df_citations.shape)
+        file_path = f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_{a}_{b}.pkl"
+        df_citations.to_pickle(file_path)
+        print(f"File {file_path} has been created")
+
+    df_citations = get_citations(arxiv_id[rd:rest], citation_url[rd:rest])
     print(df_citations.head())
     print("The size of the dataframe is : ", df_citations.shape)
-    file_path = f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}.pkl"
+    file_path = f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_{rd}_{rest}.pkl"
     df_citations.to_pickle(file_path)
     print(f"File {file_path} has been created")
+
+def merge():
+
+    rd = (round(len(arxiv_id)/10**3))*10**3
+    rest = len(arxiv_id)
+    df = pd.read_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_0_1000.pkl")
+    for i in range(1000,rd,1000):
+        j = i+10**3
+        df_p = pd.read_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_{i}_{j}.pkl")
+        df = pd.concat([df,df_p])
+    df_rest = pd.read_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_{rd}_{rest}.pkl")
+    df = pd.concat([df,df_rest])
+    
+    df.to_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}.pkl")
+    print("File data/arxiv_id_citation_year_th.pkl has been created. See structure below:")
+    print(df.head())
+    print(df.shape)
+
+
+if __name__ == "__main__":
+
+    df = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
+    arxiv_id, citation_url = recollect_data(df)
+    
+    if len(arxiv_id)>1000:
+        partition(arxiv_id,citation_url)
+        merge()
+    else:
+        print("Not enough data. Please change the parameters")
+
+
 
