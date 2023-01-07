@@ -53,7 +53,7 @@ if __name__ == '__main__':
     train_feature, train_label = get_feature_label(train_set.copy())
     test_feature, test_label = get_feature_label(test_set.copy())
 
-    print('Evaluating the logistic regression...')
+    print('----------------------Evaluating the logistic regression----------------------')
     parameter = param_tuning('f1_micro')
     estimator, df = log_class(parameter)
     class_report(estimator,df,parameter)

@@ -58,7 +58,7 @@ if __name__ == '__main__':
     train_feature, train_label = get_feature_label(train_set.copy())
     test_feature, test_label = get_feature_label(test_set.copy())
 
-    print('Evaluating the random forest...')
+    print('----------------------Evaluating the random forest----------------------')
     parameter = param_tuning('f1_micro')
     estimator,df = random_forest(parameter)
     class_report(estimator,df,parameter)

@@ -17,7 +17,7 @@ def get_dataset():
     df_full = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
 
     df_full = df_full[['arxiv_id','created']]
-    df_final = df_citation.merge(df_full,on='arxiv_id') #final dataframe with valid arxiv id, total citations and citations per year
+    df_final = df_citation.merge(df_full,on='arxiv_id') #final dataframe with valid arxiv id, total citations, citations per year and creation date
 
     return df_final
 
