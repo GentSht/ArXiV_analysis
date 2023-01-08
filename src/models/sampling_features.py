@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import StandardScaler
 import sys
@@ -56,10 +57,30 @@ def scaling(train,train_test):
     train_test = scaler.transform(train_test)
 
     return train_test
+
+def plot_labels(folder_path,train_label,test_label):
+
+    category = ['A','B','C']
+    abs = ['[0,25)','[25,100]','> 100 citations']
+    data_train = []
+    data_test = []
+
+    for i,cat in enumerate(category):
+        data_train.append(train_label.value_counts()[cat])
+        data_test.append(test_label.value_counts()[cat])
+
+    df_bar = pd.DataFrame({'Train set':data_train,'Test set':data_test},index=abs)
+    ax = df_bar.plot.bar(rot=0, subplots=True,legend=False,color={'Train set':"blue",'Test set':"red"})
     
+    plt.savefig(f"{folder_path}figures/train_test_stratification_{start_year}_{end_year}.png")
+
+    train_label.to_excel(f"{folder_path}train_set_{start_year}_{end_year}.xlsx")
+    test_label.to_excel(f"{folder_path}test_set_{start_year}_{end_year}.xlsx")
+
 if __name__ == "__main__":
 
     df_final = get_dataset()
     train_set, test_set = sampling(df_final)
     train_feature, train_label = get_feature_label(train_set.copy())
     test_feature, test_label = get_feature_label(test_set.copy())
+    plot_labels("reports/",train_label,test_label)
