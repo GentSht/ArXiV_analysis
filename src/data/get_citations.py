@@ -120,9 +120,9 @@ def merge():
     for i in range(1000,rd,1000):
         j = i+10**3
         df_p = pd.read_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_{i}_{j}.pkl")
-        df = pd.concat([df,df_p])
+        df = pd.concat([df,df_p],ignore_index=True)
     df_rest = pd.read_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_{rd}_{rest}.pkl")
-    df = pd.concat([df,df_rest])
+    df = pd.concat([df,df_rest],ignore_index=True)
     
     df.to_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}.pkl")
     print("File data/arxiv_id_citation_year_th.pkl has been created. See structure below:")
