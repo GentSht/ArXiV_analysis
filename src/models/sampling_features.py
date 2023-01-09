@@ -69,8 +69,8 @@ def plot_labels(folder_path,train_label,test_label):
         data_train.append(train_label.value_counts()[cat])
         data_test.append(test_label.value_counts()[cat])
 
-    df_bar = pd.DataFrame({'Train set':data_train,'Test set':data_test},index=abs)
-    ax = df_bar.plot.bar(rot=0, subplots=True,legend=False,color={'Train set':"blue",'Test set':"red"})
+    df_bar = pd.DataFrame({'Training set':data_train,'Test set':data_test},index=abs)
+    ax = df_bar.plot.bar(rot=0, subplots=True,legend=False,color={'Training set':"blue",'Test set':"red"})
     
     plt.savefig(f"{folder_path}figures/train_test_stratification_{start_year}_{end_year}.png")
 
