@@ -13,7 +13,7 @@ Therefore, the full dataset comprises 7397 valid `hep-th` articles.
 As a first observation, it's interesting to look at the distribution and the statistics of the total number of citations per article, as it is shown below.
 
 <p align="center">
-  <img src="reports/figures/citation_distribution_2010_2015.png" width=18% height=18% >
+  <img src="reports/figures/citation_distribution_2010_2015.png" width=35% height=35% >
 </p>
 
 |Count|Mean|Min|Max|75%|
@@ -32,7 +32,7 @@ The first category, namely **A**, include the articles that have a total of cita
 The [script](src/models/sampling_features.py) `sampling_features.py` processes what has been discussed in the last two paragraphs. The next image shows the distribution of the three categories in the two sets.
 
 <p align = "center">
-    <img src="reports/figures/train_test_stratification_2010_2015.png" width=18% height=18%>
+    <img src="reports/figures/train_test_stratification_2010_2015.png" width=35% height=35%>
 </p>
 
 
