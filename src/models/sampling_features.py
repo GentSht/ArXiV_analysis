@@ -24,8 +24,7 @@ def get_dataset():
 
 def sampling(df_final):
 
-    col = df_final["Total"].to_list()
-    mean = sum(col)/len(col) #mean of the total number of ciations
+    mean = df_final['Total'].mean()
 
     df_final['strat_category'] = pd.cut(df_final['Total'], bins=[0,mean,100,np.inf], labels=['A','B','C'],include_lowest=True,right=True) #defining classes
     split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=45) #unbalanced classifications need stratified sampling
@@ -60,8 +59,9 @@ def scaling(train,train_test):
 
 def plot_labels(folder_path,train_label,test_label):
 
+    mean = int(df_final['Total'].mean())
     category = ['A','B','C']
-    abs = ['[0,25)','[25,100]','> 100 citations']
+    abs = [f'[0,{mean})',f'[{mean},100]','> 100 citations']
     data_train = []
     data_test = []
 

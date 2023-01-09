@@ -28,6 +28,7 @@ def excel(folder_path, start_year,end_year):
 def report_json():
 
     reports = glob.glob("reports/*.json")
+    mean = int(df['Total'].mean())
     classifier = []
     precision = {}
     recall = {}
@@ -44,7 +45,7 @@ def report_json():
             f1_micro[data['Estimator']] = 100*data['f1_micro']
 
          
-    abs = ['[0,25)','[25,100]','> 100 citations']
+    abs = [f'[0,{mean})',f'[{mean},100]','> 100 citations']
 
     plt.figure(0)
     df_micro = pd.DataFrame({'Classifiers':list(f1_micro.values())},index=classifier)
@@ -55,8 +56,8 @@ def report_json():
     
     for i, clf in enumerate(classifier):
         plt.figure(i+1)
-        df = pd.DataFrame({'Precision':precision[i],'Recall':recall[i],'F1':f1_score[i]},index=abs)
-        ax = df.plot.bar(rot=0)
+        df_prf = pd.DataFrame({'Precision':precision[i],'Recall':recall[i],'F1':f1_score[i]},index=abs)
+        ax = df_prf.plot.bar(rot=0)
         plt.title(f'{clf} Performance')
         plt.savefig(f'reports/figures/{clf}_cat_prf.png')
         print(f'reports/figures/{clf}_cat_prf.png has been saved')
