@@ -1,2 +1,17 @@
-# ArXiV_analysis
-Predict the impact of a scientific paper (hep-th) by using the number of citations.
+# Impact prediction of articles in theoretical physics
+## Introduction and overview
+
+## Datasets
+
+
+## Methodology
+
+
+## Results
+### Logistic Regression
+
+### Decision Tree
+
+### Random Forest
+
+## Future implementations
