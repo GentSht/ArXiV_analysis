@@ -7,7 +7,7 @@ from sklearn import metrics
 from sampling_features import *
 
 def random_forest(parameter):
-    
+    #same code structure as in log_reg.py
     rf_model = RandomForestClassifier(random_state=0,max_depth=parameter['max_depth'],criterion=parameter['criterion'],max_features=parameter['max_features'],
     n_estimators=parameter['n_estimators'])
     rf_model.fit(train_feature,train_label)

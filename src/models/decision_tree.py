@@ -7,7 +7,7 @@ from sklearn import metrics
 from sampling_features import *
 
 def decision_tree(parameter):
-    
+    #same code structure as in log_reg.py
     dt_model = DecisionTreeClassifier(random_state=0,max_depth=parameter['max_depth'], min_samples_split=parameter['min_samples_split'],
     min_samples_leaf=parameter['min_samples_leaf'])
 

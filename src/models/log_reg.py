@@ -9,6 +9,7 @@ from sampling_features import *
 
 def log_class(parameter):
     
+    #defining the model. Doing the regression and fitting to the test test.
     lm_model = LogisticRegression(multi_class='auto',max_iter=parameter['max_iter'],solver=parameter['solver'])
     lm_model.fit(train_feature,train_label)
 
@@ -23,7 +24,8 @@ def log_class(parameter):
     return lm_model.__class__.__name__, lm_final
 
 def param_tuning(score):
-  
+    
+    #basic grid search
     iter = list(np.linspace(1000,10000,10))
 
     lm_model = LogisticRegression(multi_class='auto')
@@ -37,6 +39,7 @@ def param_tuning(score):
 
 def class_report(estimator,df,parameter):
     
+    #showing the metrics report and saving it in a json file
     class_dict = {**{'Estimator':estimator,'f1_macro':metrics.f1_score(df['Actual'],df['Predicted'],average='macro')},**parameter}
     report_metric = metrics.classification_report(df['Actual'],df['Predicted'],output_dict=True)
     

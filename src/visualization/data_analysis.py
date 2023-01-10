@@ -7,6 +7,8 @@ import json
 
 def dist_citations(folder_path,start_year,end_year):
 
+    # Distribution of the number of citations
+
     stat_table = df['Total'].describe()
     stat_table.to_excel(f"{folder_path}_stat_table_{start_year}_{end_year}.xlsx")
     print(stat_table)
@@ -20,12 +22,19 @@ def dist_citations(folder_path,start_year,end_year):
     plt.title("Distribution of the number of citations for hep-th articles (2010-15)")
     plt.savefig(f"{folder_path}citation_distribution_{start_year}_{end_year}.png")
 
+def total_set():
 
-def excel(folder_path, start_year,end_year):
-    df.to_excel(f"{folder_path}total_citation_year_th_{start_year}_{end_year}.xlsx")
-    print("Excel file created")
+    #the whole data harvested in an excel file
+    df1 = pd.read_pickle("data/full_data_th_2010_2015.pkl")
+    df2 = pd.read_pickle("data/arxiv_id_total_citation_year_th_2010_2015.pkl")
+
+    df_dwn = df1.merge(df2,on="arxiv_id")
+    df_dwn.to_excel("data/final/data_hepTH_2010_2015.xlsx")
+
+
 
 def report_json():
+    #function to plot the performance of the three classifiers
 
     reports = glob.glob("reports/*.json")
     mean = int(df['Total'].mean())
@@ -67,7 +76,6 @@ def report_json():
 
 if __name__ == "__main__":
     df = pd.read_pickle("data/arxiv_id_total_citation_year_th_2010_2015.pkl")
-    #excel("reports/",2010,2015)
-    #dist_citations("reports/figures/",2010,2015)
-
+    dist_citations("reports/figures/",2010,2015)
     report_json()
+    total_set()

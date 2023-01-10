@@ -26,9 +26,10 @@ def sampling(df_final):
 
     mean = df_final['Total'].mean()
 
-    df_final['strat_category'] = pd.cut(df_final['Total'], bins=[0,mean,100,np.inf], labels=['A','B','C'],include_lowest=True,right=True) #defining classes
+    df_final['strat_category'] = pd.cut(df_final['Total'], bins=[0,mean,100,np.inf], labels=['A','B','C'],include_lowest=True,right=True) #defining 3 classes
     split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=45) #unbalanced classifications need stratified sampling
 
+    #creating the training and test sets.
     for train_index, test_index in split.split(df_final, df_final['strat_category']):
         strat_train_set = df_final.loc[train_index]
         strat_test_set = df_final.loc[test_index]
@@ -38,12 +39,13 @@ def sampling(df_final):
 def get_feature_label(data):
     
     col = data["Total"].to_list()
-    labels = data["strat_category"]
+    labels = data["strat_category"] #the three categories
     ft = []
 
     for i, _ in enumerate(col):
         published = int(data.iloc[i]["created"])
         ft.append([data.iloc[i][str(published)]+data.iloc[i][str(published+1)],data.iloc[i][str(published+2)],data.iloc[i][str(published+3)]])
+        #defining features as the number of citations each year the article is published (0+1,2,3)                                                             
 
     features = pd.DataFrame(ft, columns=['1y','2y','3y'])
     
@@ -59,6 +61,7 @@ def scaling(train,train_test):
 
 def plot_labels(folder_path,train_label,test_label):
 
+    #plot the fraction of categories in the training and test sets.
     mean = int(df_final['Total'].mean())
     category = ['A','B','C']
     abs = [f'[0,{mean})',f'[{mean},100]','> 100 citations']

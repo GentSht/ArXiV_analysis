@@ -12,6 +12,7 @@ ihep_search_article = "https://inspirehep.net/api/literature?sort=mostcited&size
 year = [str(x+1) for x in range(int(start_year)-1,2022)]
 
 def progress_bar(count, total, status=''):
+    #just a progress bar to know where we are at
     bar_len = 60
     filled_len = int(round(bar_len * count / float(total)))
 
@@ -30,15 +31,15 @@ def recollect_data(df):
 
     print("Harvesting now in the InspireHep database")
     print('There are initially %i arXiV articles' % len(arxiv_ID))
-    
+    #to my knowledge, it is not possible to get a link to the citations with the inspireHep API with only the arxiv id
     for i,id in enumerate(arxiv_ID):
         inspirehep_url_arxiv = f"{ihep_search_arxiv}{id}"
         try:
-            control_number = requests.get(inspirehep_url_arxiv).json()["metadata"]["control_number"]
+            control_number = requests.get(inspirehep_url_arxiv).json()["metadata"]["control_number"]#important number to search for the citations
             citation_url.append(f"{ihep_search_article}{control_number}")
             arxiv_id.append(id)
         except KeyError:
-            print("The arXiV id %s with index %i gives an error. It has been removed." % (id,i))
+            print("The arXiV id %s with index %i gives an error. It has been removed." % (id,i))#some arxiv ids can't be found in inspireHep
         
         progress_bar(i,len(arxiv_ID),'fetching arxiv ids')
 
@@ -74,7 +75,7 @@ def get_citations(arxiv_id, citation_url):
         data_article = requests.get(url).json()
         citation_tot.append(data_article["hits"]["total"])
         if len(data_article["hits"]["hits"]) == 0:
-            citation_date[i].append('NaN')
+            citation_date[i].append('NaN')#some articles have zero citations, otherwise no index in dictionnary->probably a smarter way to do this...
         else : 
             for j, _ in enumerate(data_article["hits"]["hits"]):
                 citation_date[i].append(data_article["hits"]["hits"][j]["created"][:4]) #getting the year of publication of a citing article
@@ -91,7 +92,7 @@ def get_citations(arxiv_id, citation_url):
     return citation_per_year
 
 def partition(arxiv_id, citation_url):
-
+    #just a function to partition the dataset into smaller sets to not overload the API
     rd = (round(len(arxiv_id)/10**3))*10**3
     rest = len(arxiv_id)
 
@@ -113,7 +114,7 @@ def partition(arxiv_id, citation_url):
     print(f"File {file_path} has been created")
 
 def merge():
-
+    #merge all the dataframes created in the partition process
     rd = (round(len(arxiv_id)/10**3))*10**3
     rest = len(arxiv_id)
     df = pd.read_pickle(f"data/arxiv_id_total_citation_year_th_{start_year}_{end_year}_0_1000.pkl")
@@ -135,7 +136,7 @@ if __name__ == "__main__":
     df = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
     arxiv_id, citation_url = recollect_data(df)
     
-    if len(arxiv_id)>1000:
+    if len(arxiv_id)>1000: #we expect at least a 1000 articles scraped
         partition(arxiv_id,citation_url)
         merge()
     else:
