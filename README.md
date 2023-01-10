@@ -45,20 +45,39 @@ The choice of classifiers is pretty standard. For the time being, only a logisti
 |        |Logistic Regression|Decision Tree|Random Forest|
 |--------|-------------------|-------------|-------------|
 |Parameter space|'solver' : ['saga','lbfgs','newton-cg']|'max_depth' : [x+1 for x in range(32)], 'min_samples_split' : [2, 5, 10, 20, 50, 100, 200], 'min_samples_leaf' : [1, 4, 7, 10] |'criterion' : ['gini','entropy'], 'max_depth' : [1, 5, 10, 50], 'max_features' : ['log2','sqrt'], 'n_estimators' : [100, 150, 200, 250, 300]|
-|CV Result|'solver' : 'saga', 'max_iter' : 2000'|'max_depth' : 9, 'min_samples_split' : 50, 'min_samples_leaf' : 7|'criterion' : 'entropy', 'max_depth' : 5, 'max_features' : 'log2', 'n_estimators' : 150|
+|CV Result|'solver' : 'saga', 'max_iter' : 2000|'max_depth' : 9, 'min_samples_split' : 50, 'min_samples_leaf' : 7|'criterion' : 'entropy', 'max_depth' : 5, 'max_features' : 'log2', 'n_estimators' : 150|
 
 Note that some interval of the maximum iteration was also put to tune, but it gave rise to a convergence error. A number of iteration of a 2000 was found to be enough and did not lead to divergence.
 
 ### Metrics
 
-In the spirit of a quick and dirty analysis, the F1-score was chosen to determine how good a classifier is. In an imbalanced setting, it is highly preferable to use this metric instead of accuracy, since the latter, by definition, will be close to 1 if one class is much more represented. Although it seems F1 does a good job
+In the spirit of a quick and dirty analysis, the F1-score was chosen to determine how good a classifier is. In an imbalanced setting, it is highly preferable to use this metric instead of accuracy, since the latter, by definition, will be close to 1 if one class is much more represented. One can also find conceptual problems with the F1 score such as the fact that the precision and recall are given the same weight, but in this project's case, the difference between a false positive and a false negative is not of critical importance (F1$\beta$ can do the job). Many other classification metrics can be implemented in a similar manner and will be in the next project stages (for instance the kappa or Jaccard metrics).
+
+Moreover, it is crucial to consider the correct F1 averaging. Here, the `macro` average was used so that the F1 score of each class weighs the same. Indeed, the models should give a good prediction no matter the category an article belongs to. That's why the `micro` average, which is equivalent to the accuracy for multiclass problems with only label per features and the `weight` average, which would skew the score towards 1 because of othe major percentage of class **A** labels, were not used.
 
 
 ## Results
-### Logistic Regression
 
-### Decision Tree
+The figure below compares the F1 score of each classifier. It seems the three models predicts equally well the article's category.
+<p>
+    <img src="reports/figures/f1_macro_all_classifiers.png" width=35% height=35%>
+</p>
 
-### Random Forest
+The precision, recall and F1 score per category as measured by each estimator can be also observed to have a high values as shown in the three figures below.
+
+<p>
+    <img src="reports/figures/LogisticRegression_cat_prf.png" width=35% height=35%>
+</p>
+
+<p>
+    <img src="reports/figures/DecisionTreeClassifier_cat_prf.png" width=35% height=35%>
+</p>
+
+<p>
+    <img src="reports/figures/RandomForestClassifier_cat_prf.png" width=35% height=35%>
+</p>
+
 
 ## Future implementations
+
+This project is definitely not a closed one. To the day this is being written, other ideas are being thought of, such as evaluating other models like SVM or Gradient Boosting. The next logical step would be to include in the features the citations that the authors received before the article has been published. Indeed, an article written by a reputed physicist has more chances to be cited. Also, it is interesting to investigate the role of the abstract and the google HITS in the citation evolution of an article. A neural network could be useful and has been used other [times](https://arxiv.org/abs/1809.04365).
