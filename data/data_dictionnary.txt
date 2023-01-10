@@ -1,0 +1,34 @@
+-----------File data/full_data_th_2010_2015.pkl--------------
+
+|title|abstract|categories|created|arxiv_id|doi|
+|-----|--------|----------|-------|--------|---|
+|Text |Text    |Text      |Integer|Text    |Text|
+
+
+
+------------File data/arxiv_id_citation_links_2010_2015.pkl---------------
+
+|arxiv_id|citation_link|
+|--------|-------------|
+|Text    |Text         |
+
+
+
+-------------File data/arxiv_id_total_citation_year_th_2010_2015.pkl---------
+
+|arxiv_id|Total|2010|2011|...|2022|
+|--------|-----|----|----|---|----|
+|Text    |Integer|Integer|...|Integer|
+
+
+
+
+------------File data/final/data_hepTH_2010_2015.xlsx---------------------
+
+|title|abstract|categories|created|arxiv_id|doi|Total|2010|2011|...|2022|
+|-----|--------|----------|-------|--------|---|-----|----|----|---|----|
+|Text |Text    |Text      |Integer|Text    |Text|Text    |Integer|Integer|...|Integer|
+
+
+
+
