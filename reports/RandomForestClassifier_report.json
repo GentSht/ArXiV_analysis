@@ -1,6 +1,6 @@
 {
     "Estimator": "RandomForestClassifier",
-    "f1_micro": 0.9006756756756756,
+    "f1_macro": 0.8256021248114154,
     "criterion": "entropy",
     "max_depth": 5,
     "max_features": "log2",

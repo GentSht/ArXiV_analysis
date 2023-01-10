@@ -9,7 +9,7 @@ from sampling_features import *
 
 def log_class(parameter):
     
-    lm_model = LogisticRegression(multi_class='multinomial',max_iter=parameter['max_iter'],solver=parameter['solver'])
+    lm_model = LogisticRegression(multi_class='auto',max_iter=parameter['max_iter'],solver=parameter['solver'])
     lm_model.fit(train_feature,train_label)
 
     lm_pred_prob = pd.DataFrame(lm_model.predict_proba(test_feature))
@@ -26,7 +26,7 @@ def param_tuning(score):
   
     iter = list(np.linspace(1000,10000,10))
 
-    lm_model = LogisticRegression(multi_class='multinomial')
+    lm_model = LogisticRegression(multi_class='auto')
     parameters = {'solver':['saga','lbfgs','newton-cg'], 'max_iter':iter}
 
     grid_search = GridSearchCV(lm_model,parameters, cv=5,scoring=score)
@@ -37,7 +37,7 @@ def param_tuning(score):
 
 def class_report(estimator,df,parameter):
     
-    class_dict = {**{'Estimator':estimator,'f1_micro':metrics.f1_score(df['Actual'],df['Predicted'],average='micro')},**parameter}
+    class_dict = {**{'Estimator':estimator,'f1_macro':metrics.f1_score(df['Actual'],df['Predicted'],average='macro')},**parameter}
     report_metric = metrics.classification_report(df['Actual'],df['Predicted'],output_dict=True)
     
     j_dict = {**class_dict,**report_metric}
@@ -54,6 +54,6 @@ if __name__ == '__main__':
     test_feature, test_label = get_feature_label(test_set.copy())
 
     print('----------------------Evaluating the logistic regression----------------------')
-    parameter = param_tuning('f1_micro')
+    parameter = param_tuning('f1_macro')
     estimator, df = log_class(parameter)
     class_report(estimator,df,parameter)

@@ -42,7 +42,7 @@ def param_tuning(score):
 
 def class_report(estimator,df,parameter):
     
-    class_dict = {**{'Estimator':estimator,'f1_micro':metrics.f1_score(df['Actual'],df['Predicted'],average='micro')},**parameter}
+    class_dict = {**{'Estimator':estimator,'f1_macro':metrics.f1_score(df['Actual'],df['Predicted'],average='macro')},**parameter}
     report_metric = metrics.classification_report(df['Actual'],df['Predicted'],output_dict=True)
     
     j_dict = {**class_dict,**report_metric}
@@ -59,6 +59,6 @@ if __name__ == '__main__':
     test_feature, test_label = get_feature_label(test_set.copy())
 
     print('----------------------Evaluating the random forest----------------------')
-    parameter = param_tuning('f1_micro')
+    parameter = param_tuning('f1_macro')
     estimator,df = random_forest(parameter)
     class_report(estimator,df,parameter)

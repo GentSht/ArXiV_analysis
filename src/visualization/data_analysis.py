@@ -33,7 +33,7 @@ def report_json():
     precision = {}
     recall = {}
     f1_score = {}
-    f1_micro = {}
+    f1_macro = {}
 
     for i, report in enumerate(reports):
         with open(report, "r") as file:
@@ -42,17 +42,17 @@ def report_json():
             precision[i] = [100*data['A']['precision'],100*data['B']['precision'],100*data['C']['precision']]
             recall[i] = [100*data['A']['recall'],100*data['B']['recall'],100*data['C']['recall']]
             f1_score[i] = [100*data['A']['f1-score'],100*data['B']['f1-score'],100*data['C']['f1-score']]
-            f1_micro[data['Estimator']] = 100*data['f1_micro']
+            f1_macro[data['Estimator']] = 100*data['f1_macro']
 
          
     abs = [f'[0,{mean})',f'[{mean},100]','> 100 citations']
 
     plt.figure(0)
-    df_micro = pd.DataFrame({'Classifiers':list(f1_micro.values())},index=classifier)
-    cp = df_micro.plot.bar(rot=0,legend=False)
-    plt.title('F1 micro')
-    plt.savefig('reports/figures/f1_micro_all_classifiers.png')
-    print('reports/figures/f1_micro_all_classifiers.png has been saved')
+    df_macro = pd.DataFrame({'Classifiers':list(f1_macro.values())},index=classifier)
+    cp = df_macro.plot.bar(rot=0,legend=False)
+    plt.title('F1 macro')
+    plt.savefig('reports/figures/f1_macro_all_classifiers.png')
+    print('reports/figures/f1_macro_all_classifiers.png has been saved')
     
     for i, clf in enumerate(classifier):
         plt.figure(i+1)

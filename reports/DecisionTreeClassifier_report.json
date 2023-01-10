@@ -1,6 +1,6 @@
 {
     "Estimator": "DecisionTreeClassifier",
-    "f1_micro": 0.897972972972973,
+    "f1_macro": 0.8194890480499559,
     "max_depth": 9,
     "min_samples_leaf": 7,
     "min_samples_split": 50,
