@@ -47,7 +47,7 @@ The [script](src/models/sampling_features.py) `sampling_features.py` processes w
 
 ### Models
 
-The choice of classifiers is pretty standard. For the time being, only a logistic regression, a decision tree and a random forest were implemented. The table of the parameter space explored with a 5-fold cross validation and the optimal hyperparameters is shown below. The F1-score was used to discriminate (see next subsection).
+The choice of classifiers is pretty standard. For the time being, only a logistic regression, a decision tree and a random forest were implemented. The table of the parameter space explored with a 5-fold exhaustive grid search and the results is shown below. The F1-score was used to discriminate (see next subsection).
 
 |        |Logistic Regression|Decision Tree|Random Forest|
 |--------|-------------------|-------------|-------------|
