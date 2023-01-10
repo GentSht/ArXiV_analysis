@@ -13,7 +13,11 @@ The theoretical physics articles were collected on [ArXiV](https://arxiv.org/) u
 In order to get the total citation count but also the number of citations that an article get each year after it is created, it was necessary to use the [InspireHep API](https://github.com/inspirehep/rest-api-doc) (InspireHEP is a database that gathers articles in high energy physics). For more information, please refer to the script `get_citations.py` [here](src/data/get_citations.py).
 
 The initial project was to study all the articles uploaded from year 1995 to 2015, but since each API limited the number of requests per second, a sleeping time was sometimes mandatory, which rendered the process very long.  Due to time constraints, only the articles between 01-01-2010 and 01-01-2015 were considered.
-Therefore, the full dataset comprises 7397 valid `hep-th` articles.
+Therefore, the full dataset comprises 7397 valid `hep-th` articles. The structure of the dataset is represented in the table below and can be downloaded [here](data/final/data_hepTH_2010_2015.xlsx). The data dictionnary for all data files can be found [here](data/data_dictionnary.txt).
+
+|title|abstract|categories|created|arxiv_id|doi|Total|2010|2011|...|2022|
+|-----|--------|----------|-------|--------|---|-----|----|----|---|----|
+|Text |Text    |Text      |Integer|Text    |Text|Text    |Integer|Integer|...|Integer|
 
 As a first observation, it's interesting to look at the distribution and the statistics of the total number of citations per article, as it is shown below.
 
