@@ -1,7 +1,10 @@
 # Citation prediction of articles in theoretical physics
 
 
-## Introduction and overview
+## Introduction and motivation
+
+Each year that passes the number of physics publication increases at a high rate. Most of them receive little to no attention while a very small minority redefines their respective field of research. Because of this high number of articles, it can be sometimes hard to gauge which one deserves interest. Modern recommendation softwares are often very competent at providing related articles based on keywords. An other more interesting aspect of trying to predict the number of citations, with respect to some user input, is the possibility of catching on a promising lead early on. This could help for instance a starting researcher find an unbeaten path. This approach assumes that a given learning model make a prediction at the instant the article is uploaded in the database. It would take as features for example the author's citation background or elements from the article itself, which would be a more advanced analysis.
+Although this is a clear future goal of this project, for the time being the focus is on predicting the total number of citations up to some year with the knowledge of the citation data of the first three years. Moreover, a precise prediction of this number is not envisaged as it is a quite complex regression, but rather to anticipate the group the article belongs to, namely lesser impact, impactful and influential. Many researches in academia have already tackled a similar problem[[1]](https://arxiv.org/abs/1809.04365)[[2]](https://arxiv.org/pdf/2012.15192.pdf). The parameter space studied in this project was taken from the second article.
 
 ## Datasets
 
@@ -51,7 +54,7 @@ Note that some interval of the maximum iteration was also put to tune, but it ga
 
 ### Metrics
 
-In the spirit of a quick and dirty analysis, the F1-score was chosen to determine how good a classifier is. In an imbalanced setting, it is highly preferable to use this metric instead of accuracy, since the latter, by definition, will be close to 1 if one class is much more represented. One can also find conceptual problems with the F1 score such as the fact that the precision and recall are given the same weight, but in this project's case, the difference between a false positive and a false negative is not of critical importance (F1$\beta$ can do the job). Many other classification metrics can be implemented in a similar manner and will be in the next project stages (for instance the kappa or Jaccard metrics).
+In the spirit of a quick and dirty analysis, the F1-score was chosen to determine how good a classifier is. In an imbalanced setting, it is highly preferable to use this metric instead of accuracy, since the latter, by definition, will be close to 1 if one class is much more represented. One can also find conceptual problems with the F1 score such as the fact that the precision and recall are given the same weight, but in this project's case, the difference between a false positive and a false negative is not of critical importance (F1β can do the job). Many other classification metrics can be implemented in a similar manner and will be in the next project stages (for instance the kappa or Jaccard metrics).
 
 Moreover, it is crucial to consider the correct F1 averaging. Here, the `macro` average was used so that the F1 score of each class weighs the same. Indeed, the models should give a good prediction no matter the category an article belongs to. That's why the `micro` average, which is equivalent to the accuracy for multiclass problems with only label per features and the `weight` average, which would skew the score towards 1 because of othe major percentage of class **A** labels, were not used.
 
@@ -63,7 +66,7 @@ The figure below compares the F1 score of each classifier. It seems the three mo
     <img src="reports/figures/f1_macro_all_classifiers.png" width=35% height=35%>
 </p>
 
-The precision, recall and F1 score per category as measured by each estimator can be also observed to have a high values as shown in the three figures below.
+The precision, recall and F1 score per category as measured by each estimator can be also observed to have a high values as shown in the three figures below. The precision, recall and F1 scores follow the same trend across the three classifier i.e. lower values for the minority category. Overall, the decision tree seems to be the best one since its recall for **CC** is at the same level as the other metrics. 
 
 <p>
     <img src="reports/figures/LogisticRegression_cat_prf.png" width=35% height=35%>
@@ -80,4 +83,4 @@ The precision, recall and F1 score per category as measured by each estimator ca
 
 ## Future implementations
 
-This project is definitely not a closed one. To the day this is being written, other ideas are being thought of, such as evaluating other models like SVM or Gradient Boosting. The next logical step would be to include in the features the citations that the authors received before the article has been published. Indeed, an article written by a reputed physicist has more chances to be cited. Also, it is interesting to investigate the role of the abstract and the google HITS in the citation evolution of an article. A neural network could be useful and has been used other [times](https://arxiv.org/abs/1809.04365).
+This project is definitely not a closed one. To the day this is being written, other ideas are being thought of, such as evaluating other models like SVM or Gradient Boosting. The next logical step would be to include in the features the citations that the authors received before the article has been published. Indeed, an article written by a reputed physicist has more chances to be cited. Also, it is interesting to investigate the role of the abstract and the google HITS in the citation evolution of an article. A neural network could be useful and has been used other times. Finally, one could also increase the statistics and study if the models scale well to new data.
