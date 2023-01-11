@@ -8,16 +8,18 @@ Although this is a clear future goal of this project, for the time being the foc
 
 ## Datasets
 
-The theoretical physics articles were collected on [ArXiV](https://arxiv.org/) using the associated [API](https://arxiv.org/help/api/basics). The acessible data was the names of the authors, the date of creation (when the authors uploaded the article) and the unique id number that ArXiV gives to each article. This part of the harvesting was performed in `get_data.py` [here](src/data/get_data.py).
+The theoretical physics articles were collected on [ArXiV](https://arxiv.org/) using the associated [API](https://arxiv.org/help/api/basics). The acessible data was the names of the authors, the date of creation (when the authors uploaded the article) and the unique id number that ArXiV gives to each article. This part of the harvesting was performed in [get_data.py](src/data/get_data.py).
 
-In order to get the total citation count but also the number of citations that an article get each year after it is created, it was necessary to use the [InspireHep API](https://github.com/inspirehep/rest-api-doc) (InspireHEP is a database that gathers articles in high energy physics). For more information, please refer to the script `get_citations.py` [here](src/data/get_citations.py).
+In order to get the total citation count but also the number of citations that an article get each year after it is created, it was necessary to use the [InspireHep API](https://github.com/inspirehep/rest-api-doc) (InspireHEP is a database that gathers articles in high energy physics). For more information, please refer to the script [get_citations.py](src/data/get_citations.py).
 
 The initial project was to study all the articles uploaded from year 1995 to 2015, but since each API limited the number of requests per second, a sleeping time was sometimes mandatory, which rendered the process very long.  Due to time constraints, only the articles between 01-01-2010 and 01-01-2015 were considered.
-Therefore, the full dataset comprises 7397 valid `hep-th` articles. The structure of the dataset is represented in the table below and can be downloaded [here](data/final/data_hepTH_2010_2015.xlsx). The data dictionnary for all data files can be found [here](data/data_dictionnary.txt).
+Therefore, the full dataset comprises 7397 valid `hep-th` articles. The structure of the [entire dataset](data/final/data_hepTH_2010_2015.xlsx) is represented in the table below. A [data dictionnary](data/data_dictionnary.txt) is also provided.
 
 |title|abstract|categories|created|arxiv_id|doi|Total|2010|2011|...|2022|
 |-----|--------|----------|-------|--------|---|-----|----|----|---|----|
-|Text |Text    |Text      |Integer|Text    |Text|Text    |Integer|Integer|...|Integer|
+|Text |Text    |Text      |Integer|Text    |Text|Integer|Integer|Integer|...|Integer|
+|A bulk inflaton...|The universe may have...|hep-th|2010|1001.1423|10.1016/j.physletb.2010.10.036|8|4|1|...|0|
+|Integrability of N = 6 ...|In 2008, Aharony, Bergman, Jafferis, and Maldacena (ABJM)...|hep-th|2011|1105.3231|No doi|15|0|4|...|1|
 
 As a first observation, it's interesting to look at the distribution and the statistics of the total number of citations per article, as it is shown below.
 
