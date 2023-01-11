@@ -27,7 +27,7 @@
 
 |title|abstract|categories|created|arxiv_id|doi|Total|2010|2011|...|2022|
 |-----|--------|----------|-------|--------|---|-----|----|----|---|----|
-|Text |Text    |Text      |Integer|Text    |Text|Text    |Integer|Integer|...|Integer|
+|Text |Text    |Text      |Integer|Text    |Text|Integer|Integer|Integer|...|Integer|
 
 
 
