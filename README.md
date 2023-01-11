@@ -3,7 +3,10 @@
 
 ## Introduction and motivation
 
-Each year that passes the number of physics publication increases at a high rate. Most of them receive little to no attention while a very small minority redefines their respective field of research. Because of this high number of articles, it can be sometimes hard to gauge which one deserves interest. Modern recommendation softwares are often very competent at providing related articles based on keywords. An other more interesting aspect of trying to predict the number of citations, with respect to some user input, is the possibility of catching on a promising lead early on. This could help for instance a starting researcher find an unbeaten path. This approach assumes that a given learning model make a prediction at the instant the article is uploaded in the database. It would take as features for example the author's citation background or elements from the article itself, which would be a more advanced analysis.
+Each year that passes the number of physics publication increases at a high rate. Most of them receive little to no attention while a very small minority redefines their respective field of research. Because of this high number of articles, it can be sometimes hard to gauge which one deserves interest. Modern recommendation softwares are often very competent at providing related articles based on keywords. 
+
+Another more interesting aspect of trying to predict the number of citations, with respect to some user input, is the possibility of catching on a promising lead early on. This could help for instance a starting researcher find an unbeaten path. This approach assumes that a given learning model make a prediction at the instant the article is uploaded in the database. It would take as features for example the author's citation background or elements from the article itself, which would be a more advanced analysis.
+
 Although this is a clear future goal of this project, for the time being the focus is on predicting the total number of citations up to some year with the knowledge of the citation data of the first three years. Moreover, a precise prediction of this number is not envisaged as it is a quite complex regression, but rather to anticipate the group the article belongs to, namely lesser impact, impactful and influential. Many researches in academia have already tackled a similar problem[[1]](https://arxiv.org/abs/1809.04365)[[2]](https://arxiv.org/pdf/2012.15192.pdf). The parameter space studied in this project was taken from the second article.
 
 ## Datasets
@@ -20,6 +23,8 @@ Therefore, the full dataset comprises 7397 valid `hep-th` articles. The structur
 |Text |Text    |Text      |Integer|Text    |Text|Integer|Integer|Integer|...|Integer|
 |A bulk inflaton...|The universe may have...|hep-th|2010|1001.1423|10.1016/j.physletb.2010.10.036|8|4|1|...|0|
 |Integrability of N = 6 ...|In 2008, Aharony, Bergman, Jafferis, and Maldacena (ABJM)...|hep-th|2011|1105.3231|No doi|15|0|4|...|1|
+
+Note that it is possible that the sum of citations from 2010 to 2022 is not equal to Total. The scraping parameter that controlls the number of citing articles is `sort=mostcited&size=500&page=1` in [get_citations.py](src/data/get_citations.py). By changing this number or the page, you can have access to more citations. This works mostly for low-citations articles but the highly cited ones show often this inequality. Nevertheless, it is not a problem since the latter are cited a lot in the first years.
 
 As a first observation, it's interesting to look at the distribution and the statistics of the total number of citations per article, as it is shown below.
 
