@@ -29,7 +29,7 @@ def total_set():
     df2 = pd.read_pickle("data/arxiv_id_total_citation_year_th_2010_2015.pkl")
 
     df_dwn = df1.merge(df2,on="arxiv_id")
-    df_dwn.to_excel("data/final/data_hepTH_2010_2015.xlsx")
+    df_dwn.to_pickle("data/final/data_hepTH_2010_2015.pkl")
 
 
 
@@ -76,6 +76,6 @@ def report_json():
 
 if __name__ == "__main__":
     df = pd.read_pickle("data/arxiv_id_total_citation_year_th_2010_2015.pkl")
-    dist_citations("reports/figures/",2010,2015)
-    report_json()
+    #dist_citations("reports/figures/",2010,2015)
+    #report_json()
     total_set()
