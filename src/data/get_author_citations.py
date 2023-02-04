@@ -6,6 +6,7 @@ from collections import defaultdict
 
 ihep_search_arxiv = "https://inspirehep.net/api/arxiv/"
 ihep_litterature_search = "https://inspirehep.net/api/literature/"
+ihep_author_articles = "https://inspirehep.net/api/literature?sort=mostrecent&size=500&q=a%20"
 start_year = 2010
 end_year = 2015
 
@@ -64,3 +65,34 @@ def get_BAI():
     print(f'File data/arxiv_id_author_ids_{start_year}_{end_year}.pkl has been created')
     
     return
+
+def get_citations_authors(BAI, year):
+
+    url = ihep_author_articles+BAI
+    data_articles = requests.get(url).json()["hits"]
+
+    total = data_articles["total"]
+    count = 0
+    for i in range(total):
+        if data_articles["hits"][i]["created"] <= year:
+            count += 1
+
+    return count
+
+def create_table_author_citation():
+    df_author = pd.read_pickle(f"data/arxiv_id_author_ids_{start_year}_{end_year}.pkl")
+    df_year = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
+
+    year = df_year["created"].to_list()
+    authors = df_author["authors"].to_list()
+    
+    for i, article in enumerate(authors[:5]):
+        for j,auth in enumerate(article):
+            citation = get_citations_authors(auth,year[i])
+
+    return
+
+if __name__ == "__main__":
+    create_table_author_citation()    
+
+
