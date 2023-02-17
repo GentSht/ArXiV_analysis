@@ -83,18 +83,10 @@ def get_citations_authors(BAI, c_number, year):
 
 def prRed(skk): print("\033[91m {}\033[00m" .format(skk))
 
-#1001.2485
-#list index out of range
-#['J.G.Foster.1', 'Berndt.Muller.1']
-#1001.2902
-#Expecting value: line 1 column 1 (char 0)
-#['Jae.Jun.Kim.1', 'Nakwoo.Kim.1', 'J.Hun.Lee.1']
 
+#WARNING : SOME IDENTIFIERS ARE NOT WELL DEFINED. RETRIEVING ALL THE AUTHORS CITATIONS CAN TAKE UP TO 10 HOURS. BETTER TO SPLIT THE QUERY IN 1000 SMALL ONES.
 
-def create_table_author_citation():
-    df_author = pd.read_pickle(f"data/arxiv_id_author_ids_{start_year}_{end_year}.pkl")
-    df_year = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
-    df_control = pd.read_pickle(f"data/arxiv_id_control_number_{start_year}_{end_year}.pkl")
+def create_table_author_citation(split):
     
     year = df_year["created"].to_list()
     authors = df_author["authors"].to_list()
@@ -102,7 +94,7 @@ def create_table_author_citation():
     c_number = df_control["control_number"].to_list()
     author_citations = [] 
     
-    for i, article in enumerate(authors):
+    for i, article in enumerate(authors[:split]):
         dict_author = {}
         for _,auth in enumerate(article):
             try:
@@ -110,15 +102,20 @@ def create_table_author_citation():
                 dict_author[auth]=citation
             except Exception as F:
                 dict_author[auth]='NaN'
-                prRed(arxiv_id[i])
-                prRed(F)
-                prRed(auth)
+                prRed(f"{auth} link didn't work")
                 
         author_citations.append(dict_author)
+    
+    print(author_citations)
 
-    df_final = pd.DataFrame({"arxiv_id":arxiv_id,"created":year,"author_citations":author_citations})        
+    df_final = pd.DataFrame({"arxiv_id":arxiv_id[:10],"created":year[:10],"author_citations":author_citations}) 
+    print(df_final)      
     df_final.to_pickle(f"data/arxiv_id_author_citations_{start_year}_{end_year}.pkl") 
     return
 
 if __name__ == "__main__":
-    create_table_author_citation()  
+    df_author = pd.read_pickle(f"data/arxiv_id_author_ids_{start_year}_{end_year}.pkl")
+    df_year = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
+    df_control = pd.read_pickle(f"data/arxiv_id_control_number_{start_year}_{end_year}.pkl")
+
+    create_table_author_citation(1000)  
