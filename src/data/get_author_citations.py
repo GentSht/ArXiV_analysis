@@ -67,34 +67,61 @@ def get_BAI():
     
     return
 
-def get_citations_authors(BAI, c_number, year):
+def get_date():
 
+    df_author = pd.read_pickle(f"data/arxiv_id_author_ids_{start_year}_{end_year}.pkl")
+    df_control = pd.read_pickle(f"data/arxiv_id_control_number_{start_year}_{end_year}.pkl")
+
+    link_date = "https://inspirehep.net/api/literature/"
+    arxiv_id = df_author["arxiv_id"].to_list()
+    control = df_control["control_number"].to_list()
+    date_precise = []
+
+    bar = IncrementalBar('Getting the precise publication dates', suffix='%(percent)d%%', max=len(arxiv_id))
+
+    for _,c_num in enumerate(control):
+        url = f"{link_date}{c_num}"
+        date_precise.append(requests.get(url).json()["created"])
+        bar.next()
+
+    bar.finish()
+    df_creation = pd.DataFrame({"arxiv_id":arxiv_id,"created_precise":date_precise}) 
+    print(df_creation)      
+    df_creation.to_pickle(f"data/arxiv_id_created_precise_{start_year}_{end_year}.pkl")
+
+    return
+
+def get_citations_authors(BAI, c_number, year):
+    
     url = ihep_author_articles+BAI
     data_articles = requests.get(url).json()["hits"]
 
     total = len(data_articles["hits"])
     count_dist = 0
-
+    
     for i in range(total):
-        if data_articles["hits"][i]["id"] != c_number and data_articles["hits"][i]["created"] <= year:
-            count_dist += 1
+        if data_articles["hits"][i]["created"] < year:
+            count_dist += data_articles["hits"][i]["metadata"]["citation_count_without_self_citations"]
 
     return count_dist
 
 def prRed(skk): print("\033[91m {}\033[00m" .format(skk))
 
+#WARNING : SOME IDENTIFIERS ARE NOT WELL DEFINED. RETRIEVING ALL THE AUTHORS CITATIONS CAN TAKE UP TO 10 HOURS. BETTER TO SPLIT THE QUERY IN 7 SMALL ONES.
 
-#WARNING : SOME IDENTIFIERS ARE NOT WELL DEFINED. RETRIEVING ALL THE AUTHORS CITATIONS CAN TAKE UP TO 10 HOURS. BETTER TO SPLIT THE QUERY IN 1000 SMALL ONES.
+def create_table_author_citation(sp1,sp2):
 
-def create_table_author_citation(split):
+    df_author = pd.read_pickle(f"data/arxiv_id_author_ids_{start_year}_{end_year}.pkl")
+    df_year = pd.read_pickle(f"data/arxiv_id_created_precise_{start_year}_{end_year}.pkl")
+    df_control = pd.read_pickle(f"data/arxiv_id_control_number_{start_year}_{end_year}.pkl")
     
-    year = df_year["created"].to_list()
+    year = df_year["created_precise"].to_list()
     authors = df_author["authors"].to_list()
     arxiv_id = df_author["arxiv_id"].to_list()
     c_number = df_control["control_number"].to_list()
     author_citations = [] 
     
-    for i, article in enumerate(authors[:split]):
+    for i, article in enumerate(authors[sp1:sp2]):
         dict_author = {}
         for _,auth in enumerate(article):
             try:
@@ -102,20 +129,21 @@ def create_table_author_citation(split):
                 dict_author[auth]=citation
             except Exception as F:
                 dict_author[auth]='NaN'
-                prRed(f"{auth} link didn't work")
+                prRed(f"{auth} link with index {i} didn't work")
                 
         author_citations.append(dict_author)
     
-    print(author_citations)
-
-    df_final = pd.DataFrame({"arxiv_id":arxiv_id[:10],"created":year[:10],"author_citations":author_citations}) 
+    df_final = pd.DataFrame({"arxiv_id":arxiv_id[sp1:sp2],"created":year[sp1:sp2],"author_citations":author_citations}) 
     print(df_final)      
-    df_final.to_pickle(f"data/arxiv_id_author_citations_{start_year}_{end_year}.pkl") 
+    df_final.to_pickle(f"data/arxiv_id_author_citations_{start_year}_{end_year}_{sp1}_{sp2}.pkl") 
     return
 
 if __name__ == "__main__":
-    df_author = pd.read_pickle(f"data/arxiv_id_author_ids_{start_year}_{end_year}.pkl")
-    df_year = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
-    df_control = pd.read_pickle(f"data/arxiv_id_control_number_{start_year}_{end_year}.pkl")
+    start = time.time()
+    
+    create_table_author_citation(7000,7397)
+    end = time.time()
+    print("----Time elapsed---- : ", end-start)
 
-    create_table_author_citation(1000)  
+    
+
