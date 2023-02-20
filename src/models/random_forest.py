@@ -47,18 +47,30 @@ def class_report(estimator,df,parameter):
     
     j_dict = {**class_dict,**report_metric}
 
-    with open(f'reports/{estimator}_report.json','w') as jfile:
+    with open(f'reports/{estimator}_{met}_report.json','w') as jfile:
         json.dump(j_dict,jfile,indent=4)
         print(f'{jfile} has been created')    
 
 if __name__ == '__main__':
-    df_final = get_dataset()
-    train_set, test_set = sampling(df_final)
+    if met == "no_author":
+        df_final = get_dataset_no_author()
+        train_set, test_set = sampling(df_final)
 
-    train_feature, train_label = get_feature_label(train_set.copy())
-    test_feature, test_label = get_feature_label(test_set.copy())
+        train_feature, train_label = get_feature_label(train_set.copy())
+        test_feature, test_label = get_feature_label(test_set.copy())
 
-    print('----------------------Evaluating the random forest----------------------')
-    parameter = param_tuning('f1_macro')
-    estimator,df = random_forest(parameter)
-    class_report(estimator,df,parameter)
+        print('----------------------Evaluating the random forest----------------------')
+        parameter = param_tuning('f1_macro')
+        estimator,df = random_forest(parameter)
+        class_report(estimator,df,parameter)
+    else:
+        df_final = get_dataset_author()
+        train_set, test_set = sampling(df_final)
+
+        train_feature, train_label = get_author_features(train_set.copy())
+        test_feature, test_label = get_author_features(test_set.copy())
+
+        print('----------------------Evaluating the random forest----------------------')
+        parameter = param_tuning('f1_macro')
+        estimator,df = random_forest(parameter)
+        class_report(estimator,df,parameter)
