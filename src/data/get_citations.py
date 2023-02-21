@@ -136,7 +136,7 @@ if __name__ == "__main__":
     df = pd.read_pickle(f"data/full_data_th_{start_year}_{end_year}.pkl")
     arxiv_id, citation_url = recollect_data(df)
     
-    if len(arxiv_id)>1000: #we expect at least a 1000 articles scraped
+    if len(arxiv_id)>1000: #we expect at least 1000 articles to be scraped
         partition(arxiv_id,citation_url)
         merge()
     else:
